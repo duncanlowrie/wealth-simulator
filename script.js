@@ -480,82 +480,54 @@ function switchWealthLevel(newLevel) {
     resetWealth();
 }
 
-// Touch support for mobile
+// Touch support for mobile - tap-based purchasing
+let selectedItem = null;
+
 function setupTouchSupport() {
     const shopItems = document.querySelectorAll('.shop-item');
+    const wrapper = document.getElementById('chunksWrapper');
 
+    // Tap on shop item to select it
     shopItems.forEach(item => {
-        let touchElement = null;
-        let isDragging = false;
-        let startY = 0;
-        let startX = 0;
-        const DRAG_THRESHOLD = 10; // pixels movement before considering it a drag
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
 
-        item.addEventListener('touchstart', (e) => {
-            touchElement = e.target.closest('.shop-item');
-            isDragging = false;
-            startY = e.touches[0].clientY;
-            startX = e.touches[0].clientX;
-        }, {passive: true});
-
-        item.addEventListener('touchmove', (e) => {
-            if (!touchElement) return;
-
-            const touch = e.touches[0];
-            const deltaY = Math.abs(touch.clientY - startY);
-            const deltaX = Math.abs(touch.clientX - startX);
-
-            // Only start dragging if moved more than threshold
-            if (!isDragging && (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD)) {
-                // If mostly vertical movement, allow scroll
-                if (deltaY > deltaX * 1.5) {
-                    touchElement = null;
-                    return;
-                }
-                // Horizontal or diagonal = drag
-                isDragging = true;
-                touchElement.classList.add('dragging');
-            }
-
-            if (isDragging) {
-                e.preventDefault();
-                const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
-
-                document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
-
-                const chunk = elementAtPoint?.closest('.chunk');
-                if (chunk) chunk.classList.add('drop-target');
-            }
-        }, {passive: false});
-
-        item.addEventListener('touchend', (e) => {
-            if (!isDragging || !touchElement) {
-                // Clean up and allow click/scroll
-                if (touchElement) touchElement.classList.remove('dragging');
-                touchElement = null;
-                isDragging = false;
+            // Deselect if clicking the same item
+            if (selectedItem === item) {
+                item.classList.remove('selected');
+                selectedItem = null;
                 return;
             }
 
-            const touch = e.changedTouches[0];
-            const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
-            const chunk = elementAtPoint?.closest('.chunk');
-
-            if (chunk && touchElement) {
-                const itemIndex = parseInt(touchElement.dataset.itemIndex);
-                const chunkId = parseInt(chunk.dataset.chunkId);
-                makePurchase(chunkId, SHOP_ITEMS[itemIndex]);
-
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById('shopPanel').classList.remove('active');
-                document.getElementById('purchasesPanel').classList.remove('active');
+            // Deselect previous item
+            if (selectedItem) {
+                selectedItem.classList.remove('selected');
             }
 
-            document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
-            if (touchElement) touchElement.classList.remove('dragging');
-            touchElement = null;
-            isDragging = false;
-        }, {passive: true});
+            // Select new item
+            selectedItem = item;
+            item.classList.add('selected');
+        });
+    });
+
+    // Tap on chunk to purchase with selected item
+    wrapper.addEventListener('click', (e) => {
+        const chunk = e.target.closest('.chunk');
+
+        if (chunk && selectedItem) {
+            const itemIndex = parseInt(selectedItem.dataset.itemIndex);
+            const chunkId = parseInt(chunk.dataset.chunkId);
+
+            makePurchase(chunkId, SHOP_ITEMS[itemIndex]);
+
+            // Close shop panel and deselect
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('shopPanel').classList.remove('active');
+            document.getElementById('purchasesPanel').classList.remove('active');
+
+            selectedItem.classList.remove('selected');
+            selectedItem = null;
+        }
     });
 }
 

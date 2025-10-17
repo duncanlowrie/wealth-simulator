@@ -257,6 +257,23 @@ body {
     cursor: grabbing;
 }
 
+.shop-item.selected {
+    background: #0066cc;
+    color: white;
+    border-color: #0066cc;
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 102, 204, 0.3);
+}
+
+.shop-item.selected .item-name {
+    color: white;
+}
+
+.shop-item.selected .item-price {
+    color: white;
+    font-weight: 700;
+}
+
 .item-icon {
     font-size: 32px;
 }
