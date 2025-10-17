@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wealth Simulator - Spend a Billion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <h1>💰 Wealth Simulator</h1>
+        <div class="wealth-dropdown-container">
+            <select id="wealthSelector" class="wealth-dropdown">
+                <option value="average">Average Person (£50k)</option>
+                <option value="millionaire">Millionaire (£1M)</option>
+                <option value="billionaire" selected>Billionaire (£1B)</option>
+                <option value="musk">Elon Musk (~£200B)</option>
+                <option value="bezos">Jeff Bezos (~£150B)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat">
+            <span class="stat-label">Total:</span>
+            <span class="stat-value" id="totalWealth">£0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Remaining:</span>
+            <span class="stat-value" id="remaining">£0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Spent:</span>
+            <span class="stat-value" id="spent">£0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Remaining:</span>
+            <span class="stat-value" id="percentage">100%</span>
+        </div>
+        <button class="reset-btn" id="resetBtn">Reset</button>
+    </div>
+
+    <!-- Shopping Panel -->
+    <div class="shop-panel" id="shopPanel">
+        <div class="shop-header">
+            <h2>Purchase Items</h2>
+        </div>
+        <div class="shop-items" id="shopItems">
+            <!-- Items will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Purchases History Panel -->
+    <div class="purchases-panel" id="purchasesPanel">
+        <div class="shop-header">
+            <h2>Purchase History</h2>
+        </div>
+        <div class="purchases-list" id="purchasesList">
+            <p class="empty-message">No purchases yet. Start shopping!</p>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <h3>Switch Wealth Level?</h3>
+            <p>This will reset all your purchases. Are you sure?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="cancelSwitch">Cancel</button>
+                <button class="modal-btn confirm" id="confirmSwitch">Switch & Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid Area -->
+    <div class="grid-container">
+        <div class="instructions">
+            <p>💰 Drag items from the shop onto the money chunks below to make purchases!</p>
+            <p>Each chunk represents £100,000. Scroll to see the full scale of wealth.</p>
+        </div>
+        <div class="chunks-wrapper" id="chunksWrapper">
+            <!-- Chunks will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Bottom Tab Bar -->
+    <div class="bottom-tab-bar">
+        <button class="tab-btn" data-tab="shop" id="shopTab">
+            <span class="tab-icon">🛒</span>
+            <span class="tab-label">Shop</span>
+        </button>
+        <button class="tab-btn" data-tab="purchases" id="purchasesTab">
+            <span class="tab-icon">📋</span>
+            <span class="tab-label">Purchases</span>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
