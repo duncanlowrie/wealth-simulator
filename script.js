@@ -153,6 +153,25 @@ function setupVirtualScrolling() {
         }
     });
 
+    // Prevent chunks from interfering with scrolling on mobile
+    let scrolling = false;
+    let scrollTimeout;
+
+    window.addEventListener('touchstart', () => {
+        scrolling = false;
+    }, {passive: true});
+
+    window.addEventListener('touchmove', () => {
+        scrolling = true;
+        clearTimeout(scrollTimeout);
+    }, {passive: true});
+
+    window.addEventListener('touchend', () => {
+        scrollTimeout = setTimeout(() => {
+            scrolling = false;
+        }, 100);
+    }, {passive: true});
+
     // Event delegation for drag-and-drop on chunks
     wrapper.addEventListener('dragover', (e) => {
         const chunk = e.target.closest('.chunk');
