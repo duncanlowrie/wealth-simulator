@@ -467,24 +467,57 @@ function setupTouchSupport() {
 
     shopItems.forEach(item => {
         let touchElement = null;
+        let isDragging = false;
+        let startY = 0;
+        let startX = 0;
+        const DRAG_THRESHOLD = 10; // pixels movement before considering it a drag
 
         item.addEventListener('touchstart', (e) => {
             touchElement = e.target.closest('.shop-item');
-            touchElement.classList.add('dragging');
-        });
+            isDragging = false;
+            startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+        }, {passive: true});
 
         item.addEventListener('touchmove', (e) => {
-            e.preventDefault();
+            if (!touchElement) return;
+
             const touch = e.touches[0];
-            const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+            const deltaY = Math.abs(touch.clientY - startY);
+            const deltaX = Math.abs(touch.clientX - startX);
 
-            document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
+            // Only start dragging if moved more than threshold
+            if (!isDragging && (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD)) {
+                // If mostly vertical movement, allow scroll
+                if (deltaY > deltaX * 1.5) {
+                    touchElement = null;
+                    return;
+                }
+                // Horizontal or diagonal = drag
+                isDragging = true;
+                touchElement.classList.add('dragging');
+            }
 
-            const chunk = elementAtPoint?.closest('.chunk');
-            if (chunk) chunk.classList.add('drop-target');
-        });
+            if (isDragging) {
+                e.preventDefault();
+                const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
+
+                document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
+
+                const chunk = elementAtPoint?.closest('.chunk');
+                if (chunk) chunk.classList.add('drop-target');
+            }
+        }, {passive: false});
 
         item.addEventListener('touchend', (e) => {
+            if (!isDragging || !touchElement) {
+                // Clean up and allow click/scroll
+                if (touchElement) touchElement.classList.remove('dragging');
+                touchElement = null;
+                isDragging = false;
+                return;
+            }
+
             const touch = e.changedTouches[0];
             const elementAtPoint = document.elementFromPoint(touch.clientX, touch.clientY);
             const chunk = elementAtPoint?.closest('.chunk');
@@ -501,7 +534,9 @@ function setupTouchSupport() {
 
             document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
             if (touchElement) touchElement.classList.remove('dragging');
-        });
+            touchElement = null;
+            isDragging = false;
+        }, {passive: true});
     });
 }
 

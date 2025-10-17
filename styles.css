@@ -594,7 +594,6 @@ body {
         padding: 8px 6px;
         min-height: 60px;
         -webkit-tap-highlight-color: transparent;
-        touch-action: none;
     }
 
     .chunk-value {
@@ -607,7 +606,6 @@ body {
 
     .shop-item {
         -webkit-tap-highlight-color: transparent;
-        touch-action: none;
     }
 
     .modal {
